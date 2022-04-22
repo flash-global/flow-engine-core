@@ -8,6 +8,7 @@ script:
 
 before_deploy:
     - npm run build
+    - npm --no-git-tag-version --allow-same-version version $TRAVIS_TAG
 
 deploy:
     - provider: npm
