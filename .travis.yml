@@ -1,0 +1,11 @@
+language: node_js
+
+node_js: 16
+
+import:
+    - source: flash-global/travis:common.yml@master
+      mode: deep_merge_append
+    - source: flash-global/travis:js/common.yml@master
+      mode: deep_merge_append
+    - source: flash-global/travis:publish_npm.yml@master
+      mode: deep_merge_append
