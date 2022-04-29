@@ -390,4 +390,23 @@ describe('Test switchCase', () => {
         expect(case3Matched).toBeFalsy();
         expect(defaultMatched).toBeTruthy();
     });
+
+    test('Default flow is optional', async () => {
+        type DataInput = { value: number };
+        let case1Matched = false;
+
+        const switchCaseFlow = switchCase<DataInput>(
+            [
+                { fn: (input: DataInput) => input.value === 1, flow: async function (input: DataInput): Promise<void> {
+                    expect(input).toStrictEqual({ value: 1 });
+                    case1Matched = true;
+                } },
+            ],
+        );
+
+        expect(switchCaseFlow.id).toStrictEqual('evaluateOneSwitchCase');
+        await expect(await switchCaseFlow({ value: 1 })).toStrictEqual({ value: 1 });
+
+        expect(case1Matched).toBeTruthy();
+    });
 });

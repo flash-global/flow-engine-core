@@ -9,7 +9,7 @@ const evaluateAllSwitchCase = <
     Input extends FlowInput = FlowInput,
     Cases extends Array<Case<Input>> = Array<Case<Input>>,
     DefaultFlow extends Flow<Input, any> = Flow<Input, any>,
->(cases: Cases, defaultFlow: DefaultFlow): Flow<Input, Input> => {
+>(cases: Cases, defaultFlow?: DefaultFlow): Flow<Input, Input> => {
     const evaluateAllSwitchCaseFlow: Flow<Input, Input> = async (input: Input): Promise<Input> => {
         let atLeastOnePass = false;
 
@@ -20,7 +20,7 @@ const evaluateAllSwitchCase = <
             }
         }
 
-        if (!atLeastOnePass) {
+        if (!atLeastOnePass && defaultFlow !== undefined) {
             await defaultFlow(input);
         }
 
@@ -35,7 +35,7 @@ const evaluateOneSwitchCase = <
     Input extends FlowInput = FlowInput,
     Cases extends Array<Case<Input>> = Array<Case<Input>>,
     DefaultFlow extends Flow<Input, any> = Flow<Input, any>,
->(cases: Cases, defaultFlow: DefaultFlow): Flow<Input, Input> => {
+>(cases: Cases, defaultFlow?: DefaultFlow): Flow<Input, Input> => {
     const evaluateOneSwitchCaseFlow: Flow<Input, Input> = async (input: Input): Promise<Input> => {
         for (const caseTest of cases) {
             if (caseTest.fn(input)) {
@@ -44,7 +44,10 @@ const evaluateOneSwitchCase = <
             }
         }
 
-        await defaultFlow(input);
+        if (defaultFlow !== undefined) {
+            await defaultFlow(input);
+        }
+
         return input;
     };
 
@@ -56,7 +59,7 @@ const switchCase = <
     Input extends FlowInput = FlowInput,
     Cases extends Array<Case<Input>> = Array<Case<Input>>,
     DefaultFlow extends Flow<Input, any> = Flow<Input, any>,
->(cases: Cases, defaultFlow: DefaultFlow, evaluateAll: boolean = false): Flow<Input, Input> => {
+>(cases: Cases, defaultFlow?: DefaultFlow, evaluateAll: boolean = false): Flow<Input, Input> => {
     return evaluateAll ?
         evaluateAllSwitchCase<Input, Cases, DefaultFlow>(cases, defaultFlow)
         : evaluateOneSwitchCase<Input, Cases, DefaultFlow>(cases, defaultFlow);
