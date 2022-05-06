@@ -3,7 +3,7 @@ type FlowOutput = {};
 type FlowId = string;
 
 interface Flow<Input extends FlowInput = FlowInput, Output extends FlowOutput = FlowOutput> {
-    (input: Input): Promise<Output> | Output,
+    (input: Input): Promise<Output>,
     id?: FlowId,
 }
 
