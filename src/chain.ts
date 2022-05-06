@@ -24,11 +24,16 @@ const build = <
 
 const chain = <
     Input extends FlowInput = FlowInput,
-    Output extends FlowOutput = FlowOutput,
->(flow: Flow<Input, Output>): ChainFlow<Input, Output> => build<Input, Input, Output>(
-    (input: Input): Input => input,
-    flow,
-);
+>(): ChainFlow<Input, Input> => {
+    const chainFlow: ChainFlow<Input, Input> = async (input: Input): Promise<Input> => input;
+
+    chainFlow.add = <
+        NewOutput extends FlowOutput = FlowOutput,
+    >(flow: Flow<Input, NewOutput>): ChainFlow<Input, NewOutput> => build<Input, Input, NewOutput>(chainFlow, flow);
+
+    chainFlow.id = 'chain';
+    return chainFlow;
+};
 
 export { ChainFlow };
 export default chain;

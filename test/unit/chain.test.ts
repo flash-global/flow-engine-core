@@ -3,11 +3,21 @@
 import { chain, ChainFlow } from '../../src';
 
 describe('Test chain', () => {
+    test('Chain with 0 step', async () => {
+        type InitialStep = { value1: number };
+
+        const chainFlow: ChainFlow<InitialStep, InitialStep> = chain<InitialStep>();
+
+        expect(chainFlow.id).toStrictEqual('chain');
+        expect(await chainFlow({ value1: 5 })).toStrictEqual({ value1: 5 });
+    });
+
     test('Chain with 1 step', async () => {
         type InitialStep = { value1: number };
         type Step1Output = InitialStep & { value2: string };
 
-        const chainFlow: ChainFlow<InitialStep, Step1Output> = chain<InitialStep, Step1Output>(
+        const chainFlow: ChainFlow<InitialStep, Step1Output> = chain<InitialStep>()
+            .add<Step1Output>(
             async (input: InitialStep): Promise<Step1Output> => {
                 expect(input).toStrictEqual({ value1: 5 });
                 return { ...input, value2: 'a' };
@@ -23,7 +33,8 @@ describe('Test chain', () => {
         type Step1Output = InitialStep & { value2: string };
         type Step2Output = Step1Output & { value3: object };
 
-        const chainFlow: ChainFlow<InitialStep, Step2Output> = chain<InitialStep, Step1Output>(
+        const chainFlow: ChainFlow<InitialStep, Step2Output> = chain<InitialStep>()
+            .add<Step1Output>(
             async (input: InitialStep): Promise<Step1Output> => {
                 expect(input).toStrictEqual({ value1: 5 });
                 return { ...input, value2: 'a' };
@@ -46,7 +57,8 @@ describe('Test chain', () => {
 
         const date = new Date();
 
-        const chainFlow: ChainFlow<InitialStep, Step3Output> = chain<InitialStep, Step1Output>(
+        const chainFlow: ChainFlow<InitialStep, Step3Output> = chain<InitialStep>()
+            .add<Step1Output>(
             async (input: InitialStep): Promise<Step1Output> => {
                 expect(input).toStrictEqual({ value1: 5 });
                 return { ...input, value2: 'a' };
